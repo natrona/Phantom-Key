@@ -1,12 +1,13 @@
-#!/usr/bin/env python3
-
 import random
 import string
+import os
 import sys
 
-def gerar_senha(tamanho=12, usar_maiusculas=True, usar_minusculas=True, usar_numeros=True, usar_simbolos=True):
-    caracteres = ""
+def limpar():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
+def gerar_senha(tamanho=12, usar_maiusculas=True, usar_minusculas=True, usar_numeros=True, usar_simbolos=True):
+    caracteres = ''
     if usar_maiusculas:
         caracteres += string.ascii_uppercase
     if usar_minusculas:
@@ -17,33 +18,76 @@ def gerar_senha(tamanho=12, usar_maiusculas=True, usar_minusculas=True, usar_num
         caracteres += string.punctuation
 
     if not caracteres:
-        return "Erro: Nenhum tipo de caractere selecionado."
+        return '[ERRO] Nenhum tipo de caractere selecionado.'
 
     return ''.join(random.choice(caracteres) for _ in range(tamanho))
 
-def ajuda():
-    print("Uso: python3 phantom.py [tamanho] [opções]")
-    print("Opções:")
-    print("  --sem-maiusculas      Remove letras maiúsculas")
-    print("  --sem-minusculas      Remove letras minúsculas")
-    print("  --sem-numeros         Remove números")
-    print("  --sem-simbolos        Remove símbolos")
-    print("  -h, --help            Mostra esta mensagem")
+def painel():
+    tamanho = 12
+    usar_maiusculas = True
+    usar_minusculas = True
+    usar_numeros = True
+    usar_simbolos = True
+
+    while True:
+        try:
+            limpar()
+            print("======== Phantom Key - Painel =========")
+            print(f"Tamanho da senha: {tamanho}")
+            print(f"[{'X' if usar_maiusculas else ' '}] Letras maiúsculas")
+            print(f"[{'X' if usar_minusculas else ' '}] Letras minúsculas")
+            print(f"[{'X' if usar_numeros else ' '}] Números")
+            print(f"[{'X' if usar_simbolos else ' '}] Símbolos")
+            print("=======================================")
+            print("1 - Gerar senha")
+            print("2 - Alterar tamanho")
+            print("3 - Alternar tipos de caracteres")
+            print("4 - Ajuda")
+            print("0 - Sair")
+            opcao = input("Escolha uma opção: ").strip()
+
+            if opcao == '1':
+                senha = gerar_senha(tamanho, usar_maiusculas, usar_minusculas, usar_numeros, usar_simbolos)
+                print(f"\nSenha gerada: {senha}\n")
+                input("Pressione Enter para voltar ao menu...")
+            elif opcao == '2':
+                try:
+                    novo_tamanho = int(input("Novo tamanho da senha: "))
+                    if novo_tamanho > 0:
+                        tamanho = novo_tamanho
+                    else:
+                        print("Digite um número positivo.")
+                        input("Pressione Enter para continuar...")
+                except ValueError:
+                    print("Valor inválido.")
+                    input("Pressione Enter para continuar...")
+            elif opcao == '3':
+                print("\nAlternar:")
+                print("1 - Maiúsculas")
+                print("2 - Minúsculas")
+                print("3 - Números")
+                print("4 - Símbolos")
+                sub = input("Escolha o tipo: ")
+                if sub == '1':
+                    usar_maiusculas = not usar_maiusculas
+                elif sub == '2':
+                    usar_minusculas = not usar_minusculas
+                elif sub == '3':
+                    usar_numeros = not usar_numeros
+                elif sub == '4':
+                    usar_simbolos = not usar_simbolos
+            elif opcao == '4':
+                print("\nEste é um gerador de senhas seguras com painel interativo no terminal.")
+                print("Escolha os tipos de caracteres e o tamanho, e gere sua senha!\n")
+                input("Pressione Enter para continuar...")
+            elif opcao == '0':
+                print("Saindo...")
+                break
+            else:
+                print("Opção inválida.")
+                input("Pressione Enter para continuar...")
+        except EOFError:
+            break
 
 if __name__ == "__main__":
-    if "-h" in sys.argv or "--help" in sys.argv:
-        ajuda()
-        sys.exit()
-
-    try:
-        tamanho = int(sys.argv[1])
-    except (IndexError, ValueError):
-        tamanho = 12  # valor padrão
-
-    usar_maiusculas = "--sem-maiusculas" not in sys.argv
-    usar_minusculas = "--sem-minusculas" not in sys.argv
-    usar_numeros = "--sem-numeros" not in sys.argv
-    usar_simbolos = "--sem-simbolos" not in sys.argv
-
-    senha = gerar_senha(tamanho, usar_maiusculas, usar_minusculas, usar_numeros, usar_simbolos)
-    print(senha)
+    painel()
